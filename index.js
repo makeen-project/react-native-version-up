@@ -12,9 +12,7 @@ const pathToRoot = process.cwd();
 const pathToPackage = argv.pathToPackage || `${pathToRoot}/package.json`;
 const info = helpers.getPackageInfo(pathToPackage);
 
-const pathToPlist = argv.pathToPlist || `${pathToRoot}/ios/${info.name}/Info.plist`;
-const pathToGradle = argv.pathToGradle || `${pathToRoot}/android/app/build.gradle`;
-
+const pathToPlist = argv.pathToPlist || `${pathToRoot}/ios/${info.name}-tvOS/Info.plist`;
 
 // getting next version
 const versionCurrent = info.version;
@@ -35,7 +33,6 @@ const message = messageTemplate.replace('${version}', version);
 log.info('\nI\'m going to increase the version in:');
 log.info(`- package.json (${pathToPackage});`, 1);
 log.info(`- ios project (${pathToPlist});`, 1);
-log.info(`- android project (${pathToGradle}).`, 1);
 
 log.notice(`\nThe version will be changed:`);
 log.notice(`- from: ${versionCurrent} (${buildCurrent});`, 1);
@@ -72,11 +69,6 @@ const update = chain.then(() => {
 
   helpers.changeVersionAndBuildInPlist(pathToPlist, version, build);
   log.success(`Version and build number in ios project (plist file) changed.`, 2);
-}).then(() => {
-  log.info('Updating version in android project...', 1);
-
-  helpers.changeVersionAndBuildInGradle(pathToGradle, version, build);
-  log.success(`Version and build number in android project (gradle file) changed.`, 2);
 });
 
 const commit = update.then(() => {
@@ -92,7 +84,6 @@ const commit = update.then(() => {
     return helpers.commitVersionIncrease(version, message, [
       pathToPackage,
       pathToPlist,
-      pathToGradle
     ]).then(() => {
       log.success(`Commit with files added. Run "git push".`, 1);
     });
