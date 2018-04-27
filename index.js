@@ -27,7 +27,7 @@ const build = buildCurrent + 1;
 
 if (argv.build) {
   helpers.changeBuildInPlist(pathToPlist, build);
-  console.log('build number increased successfully\n');
+  log.success('Build number increased');
   process.exit();
 };
 
@@ -73,7 +73,7 @@ const update = chain.then(() => {
   log.info('Updating version in xcode project...', 1);
 
   helpers.changeVersionAndBuildInPlist(pathToPlist, version, build);
-  log.success(`Version and build number in ios project (plist file) changed.`, 2);
+  log.success(`Version in tvOS project (plist file) changed.`, 2);
 });
 
 const commit = update.then(() => {
