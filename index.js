@@ -7,7 +7,6 @@ const readlineSync = require('readline-sync');
 const helpers = require('./lib/helpers');
 const log = require('./lib/log');
 
-
 const pathToRoot = process.cwd();
 const pathToPackage = argv.pathToPackage || `${pathToRoot}/package.json`;
 const info = helpers.getPackageInfo(pathToPackage);
@@ -26,13 +25,19 @@ const version = `${major}.${minor}.${patch}`;
 const buildCurrent = helpers.getBuildNumberFromPlist(pathToPlist);
 const build = buildCurrent + 1;
 
+if (argv.build) {
+  helpers.changeBuildInPlist(pathToPlist, build);
+  console.log('build number increased successfully\n');
+  process.exit();
+};
+
 // getting commit message
 const messageTemplate = argv.m || argv.message || 'release ${version}: increase versions and build numbers';
 const message = messageTemplate.replace('${version}', version);
 
 log.info('\nI\'m going to increase the version in:');
 log.info(`- package.json (${pathToPackage});`, 1);
-log.info(`- ios project (${pathToPlist});`, 1);
+log.info(`- tvOS project (${pathToPlist});`, 1);
 
 log.notice(`\nThe version will be changed:`);
 log.notice(`- from: ${versionCurrent} (${buildCurrent});`, 1);
