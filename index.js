@@ -31,6 +31,25 @@ if (argv.build) {
   process.exit();
 };
 
+if (argv.e) {
+  const allowed = ['dev', 'qa', 'stage', 'prod'];
+
+  // major version numbering for each environment
+  const numbering = [120, 110, 100, 5];
+  const idx = allowed.indexOf(argv.e);
+
+  if (idx === -1) {
+    log.error('This environment option is not allowed');
+    process.exit();
+  }
+
+  const envVersion = `${numbering[idx]}.${helpers.version(versions[1])}.${helpers.version(versions[2])}`;
+
+  helpers.changeVersionInPlist(pathToPlist, envVersion);
+  log.success(`Version changed for environment ${argv.e}`);
+  process.exit();
+};
+
 // getting commit message
 const messageTemplate = argv.m || argv.message || 'release ${version}: increase versions and build numbers';
 const message = messageTemplate.replace('${version}', version);
@@ -72,7 +91,7 @@ const update = chain.then(() => {
 }).then(() => {
   log.info('Updating version in xcode project...', 1);
 
-  helpers.changeVersionAndBuildInPlist(pathToPlist, version, build);
+  helpers.changeVersionInPlist(pathToPlist, version);
   log.success(`Version in tvOS project (plist file) changed.`, 2);
 });
 
